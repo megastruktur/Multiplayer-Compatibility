@@ -58,11 +58,11 @@ namespace Multiplayer.Compat
 
         // WorldComponent_MVCF
         private static MethodInfo mvcfGetWorldCompMethod;
-        private static AccessTools.FieldRef<object, object> mvcfAllManagersListField;
+        private static AccessTools.FieldRef<object, object> mvcfAllManagersListField = null;
         private static AccessTools.FieldRef<object, object> mvcfManagersTableField;
 
         // ManagedVerb
-        private static AccessTools.FieldRef<object, object> mvcfManagerVerbManagerField;
+        private static FastInvokeHandler mvcfManagerVerbManagerField;
 
 
         //// System ////
@@ -277,7 +277,9 @@ namespace Multiplayer.Compat
         {
             var type = AccessTools.TypeByName("MVCF.WorldComponent_MVCF");
             mvcfGetWorldCompMethod = AccessTools.Method(type, "GetComp");
-            mvcfAllManagersListField = AccessTools.FieldRefAccess<object>(type, "allManagers");
+            // Commented Out by @megastruktur as WorldComponent_MVCF soesn't have allManagers prop.
+            // mvcfAllManagersListField = AccessTools.FieldRefAccess<object>(type, "allManagers");
+            // mvcfAllManagersListField = null;
             mvcfManagersTableField = AccessTools.FieldRefAccess<object>(type, "managers");
             MP.RegisterSyncMethod(typeof(VanillaExpandedFramework), nameof(SyncedInitVerbManager));
             MpCompat.harmony.Patch(AccessTools.Method(type, "GetManagerFor"),
@@ -298,7 +300,7 @@ namespace Multiplayer.Compat
             conditionalWeakTableTryGetValueMethod = AccessTools.Method(conditionalWeakTableType, "TryGetValue");
 
             type = AccessTools.TypeByName("MVCF.ManagedVerb");
-            mvcfManagerVerbManagerField = AccessTools.FieldRefAccess<object>(type, "man");
+            mvcfManagerVerbManagerField = MethodInvoker.GetHandler(AccessTools.DeclaredPropertyGetter(type, "Manager"));
             MP.RegisterSyncWorker<object>(SyncManagedVerb, type, isImplicit: true);
             // Seems like selecting the Thing that holds the verb inits some stuff, so we need to set the context
             MP.RegisterSyncMethod(type, "Toggle");
