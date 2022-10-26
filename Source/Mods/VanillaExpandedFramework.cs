@@ -304,12 +304,6 @@ namespace Multiplayer.Compat
             MP.RegisterSyncWorker<object>(SyncManagedVerb, type, isImplicit: true);
             // Seems like selecting the Thing that holds the verb inits some stuff, so we need to set the context
             MP.RegisterSyncMethod(type, "Toggle");
-
-            // Commented
-            // type = AccessTools.TypeByName("MVCF.Harmony.Gizmos");
-            // MpCompat.RegisterLambdaDelegate(type, "GetGizmos_Postfix", 1); // Fire at will
-            // MpCompat.RegisterLambdaDelegate(type, "GetAttackGizmos_Postfix", 4); // Interrupt Attack
-            // MpCompat.RegisterLambdaDelegate(type, "Pawn_GetGizmos_Postfix", 0); // Also interrupt Attack
         }
 
         private static void PatchExplosiveTrialsEffect()
